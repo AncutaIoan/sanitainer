@@ -21,7 +21,7 @@ pub fn safe_allowlist_regexes() -> Vec<Regex> {
             Regex::new(r"(?i)\bsha256:[a-f0-9]{64}\b").unwrap(),
             Regex::new(r"\b[0-9a-f]{7,40}\b").unwrap(),
             Regex::new(r"\b[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b").unwrap(),
-            Regex::new(r"^[A-Za-z0-9+\/=]{0,19}$").unwrap(),
+            Regex::new(r"^[A-Za-z0-9+/=]{0,19}$").unwrap(),
         ]
     });
     ALLOW.clone()

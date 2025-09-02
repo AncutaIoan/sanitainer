@@ -82,7 +82,7 @@ fn redact_high_entropy(input: &str, opts: &SanitizationOptions) -> String {
         Regex::new(r"(?x)
             (?P<prefix>(?i)(token|secret|password|passwd|pwd|bearer|authorization|auth|key|apikey|api_key|access[_-]?key|id[_-]?token)[=:]\s*)?
             (?P<val>
-                [A-Za-z0-9_\-\.\/\+=]{20,}
+                [A-Za-z0-9_\-./+=]{20,}
             )
         ").unwrap()
     });
@@ -111,18 +111,18 @@ fn redact_high_entropy(input: &str, opts: &SanitizationOptions) -> String {
             // Entropy based decision OR explicit JWT shape
             let ent = shannon_entropy(val);
             if ent >= opts.entropy_threshold || JWT_RE.is_match(val) {
-                if opts.redact_entire_line {
+                return if opts.redact_entire_line {
                     // Replace entire line
                     // (?m) ^.*VAL.*$
                     let line_re =
                         Regex::new(&format!("(?m)^.*{}.*$", regex::escape(val))).unwrap();
-                    return line_re.replace_all(input, opts.mask.as_str()).into_owned();
+                    line_re.replace_all(input, opts.mask.as_str()).into_owned()
                 } else {
                     // Replace just the value; keep prefix if present for readability
                     if !prefix.is_empty() {
-                        return format!("{}{}", prefix, opts.mask);
+                        format!("{}{}", prefix, opts.mask)
                     } else {
-                        return opts.mask.clone();
+                        opts.mask.clone()
                     }
                 }
             }
